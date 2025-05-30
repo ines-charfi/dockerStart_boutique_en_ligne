@@ -1,0 +1,57 @@
+# Fichier de configuration Docker Compose pour l'application web avec Apache, PHP, MySQL et phpMyAdmin
+
+services:
+  # Service principal : le serveur web (Apache/PHP)
+  web:
+    # Construit l’image Docker à partir du Dockerfile du projet (dossier courant)
+    build: .
+    # Mappe le port 8080 de l’hôte vers le port 80 du conteneur (accès à l’application via http://localhost:8080)
+    ports:
+      - 8080:80
+    # Monte le dossier courant du projet sur l’hôte dans /var/www/html du conteneur
+    # Cela permet de voir en temps réel les modifications du code sans reconstruire l’image
+    volumes:
+      - .:/var/www/html
+
+  # Service d’administration de la base de données : phpMyAdmin
+  phpmyadmin:
+    # Utilise l’image officielle phpMyAdmin version 5.2.1
+    image: phpmyadmin/phpmyadmin:5.2.1
+    # Redémarre automatiquement le conteneur si besoin (plantage, reboot, etc.)
+    restart: always
+    # Mappe le port 8082 de l’hôte vers le port 80 du conteneur (accès à phpMyAdmin via http://localhost:8082)
+    ports:
+      - 8082:80
+    # Permet de se connecter à n’importe quel serveur MySQL
+    environment:
+      - PMA_ARBITRARY=1
+
+  # Service de base de données MySQL
+  mysql:
+    # Utilise l’image officielle MySQL la plus récente
+    image: mysql:latest
+    # Variables d’environnement pour initialiser la base de données
+    environment:
+      # Mot de passe du super-utilisateur MySQL
+      MYSQL_ROOT_PASSWORD: root
+      # Nom de la base de données à créer automatiquement
+      MYSQL_DATABASE: boutique.sql
+      # Création d’un utilisateur supplémentaire
+      MYSQL_USER: ines
+      # Mot de passe de l’utilisateur supplémentaire
+      MYSQL_PASSWORD: saja
+    # Mappe le port 3307 de l’hôte vers le port 3306 du conteneur (accès MySQL via localhost:3307)
+    ports:
+      - "3307:3306"
+    # Déclare deux volumes :
+    volumes:
+      # Volume nommé pour stocker les données MySQL de façon persistante (même après suppression du conteneur)
+      - db-data:/var/lib/mysql
+      # Monte le dossier ./db de l’hôte dans le dossier d’initialisation de MySQL
+      # Tous les fichiers .sql ou .sh présents dans ./db seront exécutés au premier démarrage du conteneur
+      - ./db:/docker-entrypoint-initdb.d
+
+# Déclaration des volumes utilisés par les services
+volumes:
+  # Volume nommé pour la persistance des données MySQL
+  db-data:
