@@ -31,15 +31,9 @@ services:
     # Utilise l’image officielle MySQL la plus récente
     image: mysql:latest
     # Variables d’environnement pour initialiser la base de données
-    environment:
-      # Mot de passe du super-utilisateur MySQL
-      MYSQL_ROOT_PASSWORD: root
-      # Nom de la base de données à créer automatiquement
-      MYSQL_DATABASE: boutique.sql
-      # Création d’un utilisateur supplémentaire
-      MYSQL_USER: ines
-      # Mot de passe de l’utilisateur supplémentaire
-      MYSQL_PASSWORD: saja
+   environment:
+     env_file: .env  # Charge les variables d’environnement depuis le fichier .env
+   # Mot de passe de l’utilisateur MySQL
     # Mappe le port 3307 de l’hôte vers le port 3306 du conteneur (accès MySQL via localhost:3307)
     ports:
       - "3307:3306"
