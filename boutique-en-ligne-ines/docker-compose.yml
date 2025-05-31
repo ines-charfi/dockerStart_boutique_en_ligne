@@ -33,7 +33,7 @@ services:
     # Variables d’environnement pour initialiser la base de données
    environment:
      env_file: .env  # Charge les variables d’environnement depuis le fichier .env
-   # Mot de passe de l’utilisateur MySQL
+   
     # Mappe le port 3307 de l’hôte vers le port 3306 du conteneur (accès MySQL via localhost:3307)
     ports:
       - "3307:3306"
